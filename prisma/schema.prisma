@@ -1,0 +1,103 @@
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id              String         @id @default(cuid())
+  email           String         @unique
+  passwordHash    String
+  name            String
+  role            String         @default("PROMOTORA") // ADMIN, PROMOTORA
+  isActive        Boolean        @default(true)
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  participants    Participant[]
+  jornadasClosed  Jornada[]      @relation("ClosedByAdmin")
+  sorteosExecuted Lottery[]      @relation("LotteryDrawnBy")
+  auditLogs       AuditLog[]
+}
+
+model Jornada {
+  id              String         @id @default(cuid())
+  number          Int            @unique // 1, 2, 3
+  name            String         // "DÍA 1", "DÍA 2", "DÍA 3"
+  status          String         @default("PENDIENTE") // PENDIENTE, ABIERTA, CERRADA
+  openedAt        DateTime?
+  closedAt        DateTime?
+  closedByAdminId String?
+  closedByAdmin   User?          @relation("ClosedByAdmin", fields: [closedByAdminId], references: [id])
+  participants    Participant[]
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+}
+
+model Participant {
+  id               String          @id @default(cuid())
+  fullName         String
+  instagram        String          @unique // Normalizado en minúsculas y sin @
+  phone            String          // Guardado como texto
+  followsInstagram Boolean         @default(true)
+  promotoraId      String
+  promotora        User            @relation(fields: [promotoraId], references: [id])
+  jornadaId        String
+  jornada          Jornada         @relation(fields: [jornadaId], references: [id])
+  status           String          @default("ACTIVO") // ACTIVO, GANADOR, SUPLENTE
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  lotteryResults   LotteryResult[]
+}
+
+model Lottery {
+  id              String          @id @default(cuid())
+  title           String
+  totalEligible   Int
+  winnersCount    Int             @default(3)
+  alternatesCount Int             @default(7)
+  drawnAt         DateTime        @default(now())
+  drawnByUserId   String?
+  drawnByUser     User?           @relation("LotteryDrawnBy", fields: [drawnByUserId], references: [id])
+  results         LotteryResult[]
+  createdAt       DateTime        @default(now())
+}
+
+model LotteryResult {
+  id            String      @id @default(cuid())
+  lotteryId     String
+  lottery       Lottery     @relation(fields: [lotteryId], references: [id], onDelete: Cascade)
+  participantId String
+  participant   Participant @relation(fields: [participantId], references: [id])
+  position      Int         // 1..10
+  type          String      // WINNER, ALTERNATE
+  createdAt     DateTime    @default(now())
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String?
+  user      User?    @relation(fields: [userId], references: [id])
+  userEmail String?
+  action    String   // LOGIN, LOGOUT, PARTICIPANTE_CREATED, JORNADA_OPENED, JORNADA_CLOSED, etc.
+  entity    String   // User, Participant, Jornada, Lottery, SystemConfig
+  entityId  String?
+  details   String?  // JSON string
+  createdAt DateTime @default(now())
+}
+
+model SystemConfig {
+  id                     String   @id @default("default")
+  eventName              String   @default("EXPO CHINA 2026")
+  lotteryName            String   @default("SORTEO MAR DE LAS PAMPAS")
+  officialInstagram      String   @default("forthing.argentina")
+  totalDays              Int      @default(3)
+  winnersCount           Int      @default(3)
+  alternatesCount        Int      @default(7)
+  excludePreviousWinners Boolean  @default(true)
+  updatedAt              DateTime @updatedAt
+}
