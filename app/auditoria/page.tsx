@@ -195,6 +195,14 @@ export default function AuditoriaPage() {
           </div>
         );
 
+      case "JORNADA_REOPENED":
+        return (
+          <div>
+            <span className="text-cyan-400 font-semibold">Reabrió altas del día: </span>
+            <span className="font-bold text-white">{parsed.jornadaName}</span>
+          </div>
+        );
+
       case "SORTEO_CREATED":
         return (
           <div className="space-y-1">
@@ -253,6 +261,13 @@ export default function AuditoriaPage() {
           <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-sky-500/10 text-sky-400 border border-sky-500/20 text-[11px] font-mono font-bold">
             <Calendar className="w-3 h-3" />
             APERTURA
+          </span>
+        );
+      case "JORNADA_REOPENED":
+        return (
+          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 text-[11px] font-mono font-bold">
+            <Calendar className="w-3 h-3" />
+            REAPERTURA
           </span>
         );
       case "SORTEO_CREATED":

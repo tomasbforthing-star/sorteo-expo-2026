@@ -3,14 +3,19 @@ import React, { useState, useEffect, useCallback } from "react";
 import {
   Search,
   Lock,
+  Unlock,
   CheckCircle2,
   Users,
+  Calendar,
   ChevronLeft,
   ChevronRight,
   ShieldAlert,
   Trash2,
   Download,
   AlertCircle,
+  Settings,
+  PlayCircle,
+  RotateCcw,
 } from "lucide-react";
 import * as XLSX from "xlsx";
 import { Input } from "@/components/ui/Input";
@@ -48,6 +53,17 @@ interface SummaryStats {
   } | null;
 }
 
+interface JornadaItem {
+  id: string;
+  number: number;
+  name: string;
+  status: "PENDIENTE" | "ABIERTA" | "CERRADA";
+  participantsCount: number;
+  openedAt: string | null;
+  closedAt: string | null;
+  closedByName: string | null;
+}
+
 export default function ParticipantesPage() {
   const { success: toastSuccess, error: toastError } = useToast();
 
@@ -69,13 +85,18 @@ export default function ParticipantesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
 
-  // Close Altas Modal States
+  // Close Altas Modal States (Promotora & Admin)
   const [isCloseModalOpen, setIsCloseModalOpen] = useState(false);
   const [isClosing, setIsClosing] = useState(false);
   const [closeSuccessData, setCloseSuccessData] = useState<{
     jornadaName: string;
     count: number;
   } | null>(null);
+
+  // Manage Days Modal States (Admin only)
+  const [isManageDaysOpen, setIsManageDaysOpen] = useState(false);
+  const [jornadasList, setJornadasList] = useState<JornadaItem[]>([]);
+  const [isUpdatingJornada, setIsUpdatingJornada] = useState(false);
 
   // Delete Participant Modal States (Admin only)
   const [participantToDelete, setParticipantToDelete] = useState<ParticipantItem | null>(null);
@@ -114,6 +135,18 @@ export default function ParticipantesPage() {
     }
   };
 
+  const fetchJornadasList = async () => {
+    try {
+      const res = await fetch("/api/jornadas");
+      if (res.ok) {
+        const data = await res.json();
+        setJornadasList(data.jornadas || []);
+      }
+    } catch {
+      console.error("Error fetching jornadas list");
+    }
+  };
+
   const fetchParticipants = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -139,6 +172,7 @@ export default function ParticipantesPage() {
   useEffect(() => {
     fetchCurrentUser();
     fetchStats();
+    fetchJornadasList();
   }, []);
 
   useEffect(() => {
@@ -151,6 +185,7 @@ export default function ParticipantesPage() {
     fetchParticipants();
   };
 
+  // Cierre de altas (Tanto Promotora como Admin)
   const handleConfirmCloseAltas = async () => {
     if (!stats.activeJornada) return;
     setIsClosing(true);
@@ -181,11 +216,52 @@ export default function ParticipantesPage() {
       setIsCloseModalOpen(false);
       toastSuccess("Cierre Completado", "Los participantes fueron incorporados a la Base Master.");
       fetchStats();
+      fetchJornadasList();
       fetchParticipants();
     } catch {
       toastError("Error", "Error de red.");
     } finally {
       setIsClosing(false);
+    }
+  };
+
+  // Administrador: Abrir o Reabrir Jornada
+  const handleAdminToggleJornada = async (
+    jornadaId: string,
+    dayNumber: number,
+    action: "OPEN" | "REOPEN" | "CLOSE"
+  ) => {
+    setIsUpdatingJornada(true);
+    try {
+      const res = await fetch("/api/jornadas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          jornadaId,
+          dayNumber,
+          action,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        toastError("Error", data.error || "No se pudo actualizar la jornada.");
+        setIsUpdatingJornada(false);
+        return;
+      }
+
+      const actionText =
+        action === "OPEN" ? "abierta" : action === "REOPEN" ? "reabierta" : "cerrada";
+      toastSuccess("Jornada Actualizada", `DÍA ${dayNumber} ${actionText} exitosamente.`);
+      setIsManageDaysOpen(false);
+      fetchStats();
+      fetchJornadasList();
+      fetchParticipants();
+    } catch {
+      toastError("Error", "Error de red al actualizar jornada.");
+    } finally {
+      setIsUpdatingJornada(false);
     }
   };
 
@@ -251,7 +327,7 @@ export default function ParticipantesPage() {
     }
   };
 
-  // Confirmar y eliminar participante
+  // Confirmar y eliminar participante (Admin)
   const handleConfirmDeleteParticipant = async () => {
     if (!participantToDelete) return;
     setIsDeleting(true);
@@ -277,6 +353,7 @@ export default function ParticipantesPage() {
       );
       setParticipantToDelete(null);
       fetchStats();
+      fetchJornadasList();
       fetchParticipants();
     } catch {
       toastError("Error", "Error de red al intentar eliminar.");
@@ -302,7 +379,7 @@ export default function ParticipantesPage() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 py-8 space-y-6">
-      {/* Top Metrics Cards & Cierre de Altas */}
+      {/* Top Metrics Cards & Cierre / Apertura de Altas */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Indicador Dinámico según filtro */}
         <div className="p-5 rounded-2xl bg-surface-card border border-cyan-500/40 shadow-[0_0_20px_rgba(0,229,255,0.1)] transition-all">
@@ -323,32 +400,73 @@ export default function ParticipantesPage() {
           </p>
         </div>
 
-        <div className="p-5 rounded-2xl bg-surface-card border border-white/10">
-          <p className="text-xs font-mono font-bold uppercase tracking-widest text-gray-400">
-            DÍA ACTUAL
-          </p>
-          <p className="text-2xl font-black font-mono text-white mt-2">
-            {stats.activeJornada ? (
-              <span className="text-cyan-300">{stats.activeJornada.name}</span>
-            ) : (
-              <span className="text-rose-400">JORNADA CERRADA</span>
-            )}
-          </p>
+        <div className="p-5 rounded-2xl bg-surface-card border border-white/10 flex flex-col justify-between">
+          <div>
+            <p className="text-xs font-mono font-bold uppercase tracking-widest text-gray-400">
+              DÍA ACTUAL
+            </p>
+            <p className="text-2xl font-black font-mono text-white mt-1">
+              {stats.activeJornada ? (
+                <span className="text-cyan-300">{stats.activeJornada.name}</span>
+              ) : (
+                <span className="text-rose-400">JORNADA CERRADA</span>
+              )}
+            </p>
+          </div>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => {
+                fetchJornadasList();
+                setIsManageDaysOpen(true);
+              }}
+              className="text-[11px] font-mono text-cyan-400 hover:text-cyan-300 underline text-left mt-2 flex items-center gap-1"
+            >
+              <Settings className="w-3 h-3" />
+              Gestionar / Abrir Días (Admin)
+            </button>
+          )}
         </div>
 
-        <div className="p-5 rounded-2xl bg-surface-card border border-white/10 flex items-center justify-center">
-          <Button
-            variant="danger"
-            size="lg"
-            disabled={!stats.activeJornada || !isAdmin}
-            onClick={() => setIsCloseModalOpen(true)}
-            className="w-full text-sm font-bold"
-            leftIcon={<Lock className="w-4 h-4" />}
-          >
-            CERRAR ALTAS DEL DÍA
-          </Button>
+        {/* Action Button: Both Promotora & Admin can CLOSE. If closed, Admin can OPEN */}
+        <div className="p-5 rounded-2xl bg-surface-card border border-white/10 flex flex-col items-center justify-center gap-1.5">
+          {stats.activeJornada ? (
+            <Button
+              variant="danger"
+              size="lg"
+              onClick={() => setIsCloseModalOpen(true)}
+              className="w-full text-sm font-bold shadow-lg shadow-rose-950/40"
+              leftIcon={<Lock className="w-4 h-4" />}
+            >
+              CERRAR ALTAS DEL DÍA
+            </Button>
+          ) : isAdmin ? (
+            <Button
+              variant="glow"
+              size="lg"
+              onClick={() => {
+                fetchJornadasList();
+                setIsManageDaysOpen(true);
+              }}
+              className="w-full text-sm font-bold"
+              leftIcon={<Unlock className="w-4 h-4" />}
+            >
+              ABRIR / GESTIONAR DÍAS
+            </Button>
+          ) : (
+            <Button
+              variant="danger"
+              size="lg"
+              disabled
+              className="w-full text-sm font-bold opacity-50 cursor-not-allowed"
+              leftIcon={<Lock className="w-4 h-4" />}
+            >
+              JORNADA CERRADA
+            </Button>
+          )}
         </div>
       </div>
+
 
       {/* Filter, Search Bar & Excel Export */}
       <Card className="p-4 space-y-4">
@@ -674,7 +792,133 @@ export default function ParticipantesPage() {
           </Button>
         </div>
       </Modal>
+
+      {/* Modal de Gestión y Apertura de Jornadas (Solo Administrador) */}
+      <Modal
+        isOpen={isManageDaysOpen}
+        onClose={() => !isUpdatingJornada && setIsManageDaysOpen(false)}
+        maxWidth="lg"
+      >
+        <div className="py-2 space-y-4">
+          <div className="flex items-center gap-3 pb-3 border-b border-white/10">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
+              <Calendar className="h-5 w-5" />
+            </div>
+            <div>
+              <h3 className="text-xl font-black text-white font-mono uppercase">
+                GESTIÓN DE DÍAS Y JORNADAS
+              </h3>
+              <p className="text-xs text-gray-400 font-mono">
+                Control de apertura, reapertura y cierre de días (Acceso Administrador).
+              </p>
+            </div>
+          </div>
+
+          <div className="space-y-3 my-4">
+            {[1, 2, 3].map((num) => {
+              const j = jornadasList.find((item) => item.number === num);
+              const isAbierta = j?.status === "ABIERTA";
+              const isCerrada = j?.status === "CERRADA";
+              const count = j?.participantsCount || 0;
+
+              return (
+                <div
+                  key={num}
+                  className={`p-4 rounded-xl border transition-all flex flex-col sm:flex-row sm:items-center justify-between gap-3 ${
+                    isAbierta
+                      ? "bg-cyan-950/30 border-cyan-500/40 shadow-[0_0_15px_rgba(0,229,255,0.1)]"
+                      : isCerrada
+                      ? "bg-[#10131a] border-white/10"
+                      : "bg-[#0b0d13] border-white/5 opacity-80"
+                  }`}
+                >
+                  <div className="flex items-center gap-3">
+                    <div
+                      className={`flex h-10 w-10 items-center justify-center rounded-xl font-mono font-black text-base ${
+                        isAbierta
+                          ? "bg-cyan-500 text-black shadow-md shadow-cyan-500/50"
+                          : isCerrada
+                          ? "bg-rose-500/20 text-rose-300 border border-rose-500/30"
+                          : "bg-white/5 text-gray-400 border border-white/10"
+                      }`}
+                    >
+                      D{num}
+                    </div>
+
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-bold text-white text-sm font-mono">DÍA {num}</span>
+                        <Badge
+                          variant={isAbierta ? "emerald" : isCerrada ? "rose" : "slate"}
+                          size="sm"
+                        >
+                          {isAbierta ? "ABIERTA (Captando)" : isCerrada ? "CERRADA" : "PENDIENTE"}
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-gray-400 font-mono mt-0.5">
+                        <strong className="text-white font-bold">{count}</strong> participantes captados
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2">
+                    {isAbierta ? (
+                      <Button
+                        type="button"
+                        variant="danger"
+                        size="sm"
+                        isLoading={isUpdatingJornada}
+                        onClick={() => handleAdminToggleJornada(j?.id || "", num, "CLOSE")}
+                        leftIcon={<Lock className="w-3.5 h-3.5" />}
+                        className="w-full sm:w-auto text-xs font-bold"
+                      >
+                        CERRAR ALTAS
+                      </Button>
+                    ) : isCerrada ? (
+                      <Button
+                        type="button"
+                        variant="secondary"
+                        size="sm"
+                        isLoading={isUpdatingJornada}
+                        onClick={() => handleAdminToggleJornada(j?.id || "", num, "REOPEN")}
+                        leftIcon={<RotateCcw className="w-3.5 h-3.5 text-cyan-400" />}
+                        className="w-full sm:w-auto text-xs font-bold text-cyan-300 hover:text-white"
+                      >
+                        REABRIR DÍA {num}
+                      </Button>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="glow"
+                        size="sm"
+                        isLoading={isUpdatingJornada}
+                        onClick={() => handleAdminToggleJornada(j?.id || "", num, "OPEN")}
+                        leftIcon={<PlayCircle className="w-3.5 h-3.5" />}
+                        className="w-full sm:w-auto text-xs font-bold"
+                      >
+                        ABRIR DÍA {num}
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <Button
+              type="button"
+              variant="secondary"
+              size="md"
+              onClick={() => setIsManageDaysOpen(false)}
+            >
+              CERRAR PANEL
+            </Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
+
 

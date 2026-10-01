@@ -42,26 +42,35 @@ export async function GET() {
 export async function POST(req: NextRequest) {
   try {
     const user = await getCurrentUser();
-    if (!user || user.role !== "ADMIN") {
+    if (!user) {
       return NextResponse.json(
-        { error: "Acción reservada exclusivamente para administradores." },
-        { status: 403 }
+        { error: "No autorizado. Inicie sesión nuevamente." },
+        { status: 401 }
       );
     }
 
-    const { jornadaId, action } = await req.json(); // action: "OPEN" | "CLOSE"
+    const { jornadaId, dayNumber, action } = await req.json(); // action: "OPEN" | "CLOSE" | "REOPEN"
 
-    if (!jornadaId || !action) {
+    if (!action) {
       return NextResponse.json(
-        { error: "Parámetros incompletos." },
+        { error: "Acción no especificada." },
         { status: 400 }
       );
     }
 
-    const jornada = await prisma.jornada.findUnique({
-      where: { id: jornadaId },
-      include: { _count: { select: { participants: true } } },
-    });
+    // Buscar jornada por ID o por número de día
+    let jornada = null;
+    if (jornadaId) {
+      jornada = await prisma.jornada.findUnique({
+        where: { id: jornadaId },
+        include: { _count: { select: { participants: true } } },
+      });
+    } else if (dayNumber) {
+      jornada = await prisma.jornada.findFirst({
+        where: { number: Number(dayNumber) },
+        include: { _count: { select: { participants: true } } },
+      });
+    }
 
     if (!jornada) {
       return NextResponse.json(
@@ -70,16 +79,17 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // --- ACCIÓN: CERRAR ALTAS (Permitido para ADMIN y PROMOTORA) ---
     if (action === "CLOSE") {
       if (jornada.status === "CERRADA") {
         return NextResponse.json(
-          { error: "Esta jornada ya fue cerrada." },
+          { error: `La jornada ${jornada.name} ya se encuentra cerrada.` },
           { status: 400 }
         );
       }
 
       const updated = await prisma.jornada.update({
-        where: { id: jornadaId },
+        where: { id: jornada.id },
         data: {
           status: "CERRADA",
           closedAt: new Date(),
@@ -96,6 +106,7 @@ export async function POST(req: NextRequest) {
         details: {
           jornadaName: jornada.name,
           participantesCaptados: jornada._count.participants,
+          closedByRole: user.role,
           closedAt: updated.closedAt,
         },
       });
@@ -108,37 +119,46 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    if (action === "OPEN") {
-      // Verificar si hay otra jornada abierta y cerrarla o advertir
-      const otherOpen = await prisma.jornada.findFirst({
-        where: { status: "ABIERTA", id: { not: jornadaId } },
-      });
-
-      if (otherOpen) {
+    // --- ACCIÓN: ABRIR O REABRIR JORNADA (EXCLUSIVO ADMIN) ---
+    if (action === "OPEN" || action === "REOPEN") {
+      if (user.role !== "ADMIN") {
         return NextResponse.json(
-          {
-            error: `Ya existe una jornada abierta (${otherOpen.name}). Ciérrela antes de abrir otra.`,
-          },
-          { status: 400 }
+          { error: "Solo los usuarios administradores pueden abrir o reabrir jornadas." },
+          { status: 403 }
         );
       }
 
+      // Si hay otra jornada actualmente abierta, cerrarla automáticamente
+      await prisma.jornada.updateMany({
+        where: {
+          status: "ABIERTA",
+          id: { not: jornada.id },
+        },
+        data: {
+          status: "CERRADA",
+          closedAt: new Date(),
+          closedByAdminId: user.userId,
+        },
+      });
+
       const updated = await prisma.jornada.update({
-        where: { id: jornadaId },
+        where: { id: jornada.id },
         data: {
           status: "ABIERTA",
-          openedAt: jornada.openedAt || new Date(),
+          openedAt: new Date(),
+          closedAt: null,
         },
       });
 
       await createAuditLog({
         userId: user.userId,
         userEmail: user.email,
-        action: "JORNADA_OPENED",
+        action: action === "REOPEN" ? "JORNADA_REOPENED" : "JORNADA_OPENED",
         entity: "Jornada",
         entityId: jornada.id,
         details: {
           jornadaName: jornada.name,
+          action: action === "REOPEN" ? "Reapertura de jornada por administrador" : "Apertura de jornada por administrador",
           openedAt: updated.openedAt,
         },
       });
@@ -159,3 +179,4 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
