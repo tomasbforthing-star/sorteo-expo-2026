@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, Sparkles, ArrowRight, Shield, UserCheck } from "lucide-react";
+import { Lock, Mail, Sparkles, ArrowRight } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/ToastContext";
@@ -46,14 +46,9 @@ export default function LoginPage() {
       router.refresh();
     } catch {
       setErrorMsg("Error de conexión al servidor.");
-      toastError("Error", "No se pudo conectar con el servidor local.");
+      toastError("Error", "No se pudo conectar con el servidor.");
       setIsLoading(false);
     }
-  };
-
-  const handleQuickLogin = (demoEmail: string, demoPass: string) => {
-    setEmail(demoEmail);
-    setPassword(demoPass);
   };
 
   return (
@@ -91,7 +86,7 @@ export default function LoginPage() {
             <Input
               label="Email"
               type="email"
-              placeholder="nombre@expchina.local"
+              placeholder="usuario@forthing.com.ar"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               leftIcon={<Mail className="w-4 h-4" />}
@@ -127,44 +122,9 @@ export default function LoginPage() {
               INGRESAR
             </Button>
           </form>
-
-          {/* Quick Demo Login selector */}
-          <div className="mt-8 pt-6 border-t border-white/10">
-            <p className="text-[11px] font-bold text-gray-400 uppercase tracking-wider mb-3 text-center font-mono">
-              Acceso Rápido DEMO
-            </p>
-            <div className="grid grid-cols-2 gap-2.5">
-              <button
-                type="button"
-                onClick={() => handleQuickLogin("admin@expchina.local", "Admin123!")}
-                className="flex items-center gap-2 p-2.5 rounded-xl bg-surface-light hover:bg-[#232938] border border-white/10 hover:border-cyan-500/40 text-left transition group"
-              >
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-amber-500/10 text-amber-400 border border-amber-500/20 group-hover:scale-105 transition-transform">
-                  <Shield className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-white">ADMIN</div>
-                  <div className="text-[10px] text-gray-400 font-mono">Admin123!</div>
-                </div>
-              </button>
-
-              <button
-                type="button"
-                onClick={() => handleQuickLogin("promotora@expchina.local", "Promotora123!")}
-                className="flex items-center gap-2 p-2.5 rounded-xl bg-surface-light hover:bg-[#232938] border border-white/10 hover:border-cyan-500/40 text-left transition group"
-              >
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-cyan-500/10 text-cyan-400 border border-cyan-500/20 group-hover:scale-105 transition-transform">
-                  <UserCheck className="w-4 h-4" />
-                </div>
-                <div>
-                  <div className="text-xs font-bold text-white">PROMOTORA</div>
-                  <div className="text-[10px] text-gray-400 font-mono">Promotora123!</div>
-                </div>
-              </button>
-            </div>
-          </div>
         </div>
       </div>
     </div>
   );
 }
+
