@@ -2,12 +2,12 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { UserPlus, Users, Trophy, LogOut, Menu, X } from "lucide-react";
+import { UserPlus, Users, Trophy, ShieldCheck, LogOut, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/ToastContext";
 import { cn } from "@/lib/utils";
 
-const NAV_ITEMS = [
+const BASE_NAV_ITEMS = [
   { name: "CAPTACIÓN RÁPIDA", href: "/captacion", icon: UserPlus },
   { name: "PARTICIPANTES", href: "/participantes", icon: Users },
   { name: "SORTEO", href: "/sorteo", icon: Trophy },
@@ -48,6 +48,12 @@ export function Navbar() {
     }
   };
 
+  // Build nav items dynamically: Promotoras see 3 modules; Admin sees 3 modules + AUDITORÍA
+  const navItems = [...BASE_NAV_ITEMS];
+  if (currentUser?.role === "ADMIN") {
+    navItems.push({ name: "AUDITORÍA", href: "/auditoria", icon: ShieldCheck });
+  }
+
   // Don't render navbar on login page
   if (pathname === "/login") return null;
 
@@ -73,9 +79,9 @@ export function Navbar() {
           </div>
         </Link>
 
-        {/* 3 Main Desktop Navigation Tabs */}
+        {/* Desktop Navigation Tabs */}
         <nav className="hidden md:flex items-center gap-1.5 bg-surface p-1.5 rounded-2xl border border-white/10">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
             return (
@@ -128,7 +134,7 @@ export function Navbar() {
       {/* Mobile dropdown menu */}
       {mobileMenuOpen && (
         <div className="md:hidden border-t border-white/10 bg-[#0d1017] p-4 space-y-2">
-          {NAV_ITEMS.map((item) => {
+          {navItems.map((item) => {
             const isActive = pathname === item.href;
             const Icon = item.icon;
             return (
@@ -168,3 +174,4 @@ export function Navbar() {
     </header>
   );
 }
+
