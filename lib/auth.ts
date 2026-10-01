@@ -48,7 +48,7 @@ export async function getCurrentUser(): Promise<SessionPayload | null> {
 
     if (token) {
       const payload = await verifyToken(token);
-      if (payload) {
+      if (payload && payload.userId) {
         const user = await prisma.user.findUnique({
           where: { id: payload.userId },
           select: { id: true, email: true, name: true, role: true, isActive: true },
@@ -65,22 +65,9 @@ export async function getCurrentUser(): Promise<SessionPayload | null> {
       }
     }
 
-    // Fallback default para localhost si no hay cookie activa aún
-    const defaultUser = await prisma.user.findFirst({
-      where: { role: "ADMIN", isActive: true },
-    });
-
-    if (defaultUser) {
-      return {
-        userId: defaultUser.id,
-        email: defaultUser.email,
-        name: defaultUser.name,
-        role: defaultUser.role as "ADMIN" | "PROMOTORA",
-      };
-    }
-
     return null;
   } catch {
     return null;
   }
 }
+

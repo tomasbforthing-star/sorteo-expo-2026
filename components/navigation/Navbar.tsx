@@ -25,16 +25,21 @@ export function Navbar() {
     fetch("/api/auth/me")
       .then((res) => (res.ok ? res.json() : null))
       .then((data) => {
-        if (data?.user) setCurrentUser(data.user);
+        if (data?.user) {
+          setCurrentUser(data.user);
+        } else {
+          setCurrentUser(null);
+        }
       })
-      .catch(() => {});
-  }, []);
+      .catch(() => setCurrentUser(null));
+  }, [pathname]);
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
     try {
       const res = await fetch("/api/auth/logout", { method: "POST" });
       if (res.ok) {
+        setCurrentUser(null);
         success("Sesión cerrada", "Ha salido del sistema.");
         router.push("/login");
         router.refresh();

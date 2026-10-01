@@ -17,7 +17,12 @@ export async function POST() {
     }
 
     const response = NextResponse.json({ success: true });
-    response.cookies.delete(COOKIE_NAME);
+    response.cookies.set({
+      name: COOKIE_NAME,
+      value: "",
+      maxAge: 0,
+      path: "/",
+    });
     return response;
   } catch (error) {
     console.error("Logout error:", error);
