@@ -59,6 +59,7 @@ export async function seedDatabase() {
       update: {
         name: u.name,
         passwordHash: passwordHash,
+        plainPassword: u.password,
         role: u.role,
         isActive: true,
       },
@@ -66,6 +67,7 @@ export async function seedDatabase() {
         email: u.email.toLowerCase().trim(),
         name: u.name,
         passwordHash: passwordHash,
+        plainPassword: u.password,
         role: u.role,
         isActive: true,
       },

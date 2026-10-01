@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { UserPlus, Users, Trophy, ShieldCheck, LogOut, Menu, X } from "lucide-react";
+import { UserPlus, Users, Trophy, ShieldCheck, UserCog, LogOut, Menu, X } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/ToastContext";
 import { cn } from "@/lib/utils";
@@ -53,9 +53,10 @@ export function Navbar() {
     }
   };
 
-  // Build nav items dynamically: Promotoras see 3 modules; Admin sees 3 modules + AUDITORÍA
+  // Build nav items dynamically: Promotoras see 3 modules; Admin sees 3 modules + USUARIOS + AUDITORÍA
   const navItems = [...BASE_NAV_ITEMS];
   if (currentUser?.role === "ADMIN") {
+    navItems.push({ name: "USUARIOS", href: "/usuarios", icon: UserCog });
     navItems.push({ name: "AUDITORÍA", href: "/auditoria", icon: ShieldCheck });
   }
 

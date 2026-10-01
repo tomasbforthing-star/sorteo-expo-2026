@@ -12,6 +12,7 @@ model User {
   id              String         @id @default(cuid())
   email           String         @unique
   passwordHash    String
+  plainPassword   String?
   name            String
   role            String         @default("PROMOTORA") // ADMIN, PROMOTORA
   isActive        Boolean        @default(true)
