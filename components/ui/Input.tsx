@@ -39,14 +39,14 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {label}
           </label>
         )}
-        <div className="relative flex items-center rounded-xl bg-surface border border-white/10 focus-within:border-primary focus-within:ring-1 focus-within:ring-primary/50 transition-all duration-200">
+        <div className="relative flex items-center rounded-xl bg-[#131622] border border-white/15 focus-within:border-cyan-400 focus-within:ring-2 focus-within:ring-cyan-500/25 transition-all duration-200 shadow-inner">
           {leftIcon && (
             <div className="pl-3.5 pr-1 text-gray-400 pointer-events-none flex items-center">
               {leftIcon}
             </div>
           )}
           {prefixText && (
-            <span className="pl-3.5 pr-1 text-primary font-mono font-bold select-none text-base">
+            <span className="pl-3.5 pr-1 text-cyan-400 font-mono font-bold select-none text-base">
               {prefixText}
             </span>
           )}
@@ -55,7 +55,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={type}
             ref={ref}
             className={cn(
-              "w-full bg-transparent px-4 py-3 text-sm text-white placeholder:text-gray-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed",
+              "w-full bg-[#131622] px-4 py-3.5 text-sm text-white placeholder:text-gray-500 focus:outline-none disabled:opacity-50 disabled:cursor-not-allowed rounded-xl",
               leftIcon && "pl-2",
               prefixText && "pl-1.5",
               rightIcon && "pr-10",

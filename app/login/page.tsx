@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lock, Mail, Sparkles, ArrowRight } from "lucide-react";
+import { Lock, Mail, Sparkles, ArrowRight, Eye, EyeOff } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useToast } from "@/components/ui/ToastContext";
@@ -12,6 +12,7 @@ export default function LoginPage() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState("");
 
@@ -81,29 +82,45 @@ export default function LoginPage() {
         </div>
 
         {/* Main Card */}
-        <div className="rounded-2xl bg-[#0f121a]/90 border border-white/10 p-8 backdrop-blur-2xl shadow-2xl shadow-black/80">
+        <div className="rounded-2xl bg-[#0f121a]/95 border border-white/10 p-8 backdrop-blur-2xl shadow-2xl shadow-black/90">
           <form onSubmit={handleSubmit} className="space-y-5">
             <Input
-              label="Email"
+              label="Email de Usuario"
               type="email"
               placeholder="usuario@forthing.com.ar"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              leftIcon={<Mail className="w-4 h-4" />}
+              leftIcon={<Mail className="w-4 h-4 text-cyan-400" />}
               autoComplete="email"
               required
             />
 
-            <Input
-              label="Contraseña"
-              type="password"
-              placeholder="••••••••"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              leftIcon={<Lock className="w-4 h-4" />}
-              autoComplete="current-password"
-              required
-            />
+            <div className="relative">
+              <Input
+                label="Contraseña"
+                type={showPassword ? "text" : "password"}
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                leftIcon={<Lock className="w-4 h-4 text-cyan-400" />}
+                autoComplete="current-password"
+                rightIcon={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((p) => !p)}
+                    className="p-1 text-gray-400 hover:text-white transition cursor-pointer"
+                    title={showPassword ? "Ocultar contraseña" : "Ver contraseña"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="w-4 h-4" />
+                    ) : (
+                      <Eye className="w-4 h-4" />
+                    )}
+                  </button>
+                }
+                required
+              />
+            </div>
 
             {errorMsg && (
               <div className="p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-xs font-semibold text-rose-300">
@@ -116,7 +133,7 @@ export default function LoginPage() {
               variant="glow"
               size="lg"
               isLoading={isLoading}
-              className="w-full"
+              className="w-full text-sm font-bold mt-2"
               rightIcon={<ArrowRight className="w-4 h-4" />}
             >
               INGRESAR
@@ -127,4 +144,5 @@ export default function LoginPage() {
     </div>
   );
 }
+
 
