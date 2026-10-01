@@ -35,7 +35,7 @@ interface UserItem {
   id: string;
   name: string;
   email: string;
-  role: "ADMIN" | "PROMOTORA";
+  role: "ADMIN" | "PROMOTORA" | "REPRESENTANTE";
   isActive: boolean;
   plainPassword?: string;
   participantsCount: number;
@@ -68,7 +68,7 @@ export default function UsuariosPage() {
   const [formName, setFormName] = useState("");
   const [formEmail, setFormEmail] = useState("");
   const [formPassword, setFormPassword] = useState("");
-  const [formRole, setFormRole] = useState<"ADMIN" | "PROMOTORA">("PROMOTORA");
+  const [formRole, setFormRole] = useState<"ADMIN" | "PROMOTORA" | "REPRESENTANTE">("PROMOTORA");
   const [formIsActive, setFormIsActive] = useState(true);
   const [showFormPassword, setShowFormPassword] = useState(false);
 
@@ -377,6 +377,7 @@ export default function UsuariosPage() {
   // Metrics
   const totalUsers = users.length;
   const adminUsers = users.filter((u) => u.role === "ADMIN").length;
+  const representanteUsers = users.filter((u) => u.role === "REPRESENTANTE").length;
   const promotoraUsers = users.filter((u) => u.role === "PROMOTORA").length;
   const activeUsers = users.filter((u) => u.isActive).length;
 
@@ -394,7 +395,7 @@ export default function UsuariosPage() {
             </h1>
           </div>
           <p className="text-xs text-gray-400 font-mono mt-1">
-            Administración de promotoras, administradores y contraseñas de acceso.
+            Administración de promotoras, representantes, administradores y contraseñas de acceso.
           </p>
         </div>
 
@@ -432,7 +433,7 @@ export default function UsuariosPage() {
       </div>
 
       {/* Metric Cards */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
         <div className="p-4 rounded-2xl bg-surface-card border border-white/10">
           <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-gray-400">
             TOTAL USUARIOS
@@ -452,6 +453,15 @@ export default function UsuariosPage() {
         </div>
 
         <div className="p-4 rounded-2xl bg-surface-card border border-white/10">
+          <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-purple-400">
+            REPRESENTANTES
+          </p>
+          <p className="text-3xl font-black font-mono text-purple-400 mt-1">
+            {representanteUsers}
+          </p>
+        </div>
+
+        <div className="p-4 rounded-2xl bg-surface-card border border-white/10">
           <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-cyan-400">
             PROMOTORAS
           </p>
@@ -460,7 +470,7 @@ export default function UsuariosPage() {
           </p>
         </div>
 
-        <div className="p-4 rounded-2xl bg-surface-card border border-white/10">
+        <div className="p-4 rounded-2xl bg-surface-card border border-white/10 col-span-2 sm:col-span-1">
           <p className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-400">
             USUARIOS ACTIVOS
           </p>
@@ -528,10 +538,10 @@ export default function UsuariosPage() {
                       {/* Role */}
                       <td className="px-6 py-4 whitespace-nowrap">
                         <Badge
-                          variant={u.role === "ADMIN" ? "amber" : "cyan"}
+                          variant={u.role === "ADMIN" ? "amber" : u.role === "REPRESENTANTE" ? "purple" : "cyan"}
                           size="sm"
                         >
-                          {u.role === "ADMIN" ? "ADMINISTRADOR" : "PROMOTORA"}
+                          {u.role === "ADMIN" ? "ADMINISTRADOR" : u.role === "REPRESENTANTE" ? "REPRESENTANTE" : "PROMOTORA"}
                         </Badge>
                       </td>
 
@@ -696,10 +706,11 @@ export default function UsuariosPage() {
                 </label>
                 <select
                   value={formRole}
-                  onChange={(e) => setFormRole(e.target.value as "ADMIN" | "PROMOTORA")}
+                  onChange={(e) => setFormRole(e.target.value as "ADMIN" | "PROMOTORA" | "REPRESENTANTE")}
                   className="w-full rounded-xl bg-[#131622] border border-white/15 px-3 py-3 text-sm text-white font-mono focus:border-cyan-400 focus:outline-none"
                 >
                   <option value="PROMOTORA">PROMOTORA</option>
+                  <option value="REPRESENTANTE">REPRESENTANTE</option>
                   <option value="ADMIN">ADMINISTRADOR</option>
                 </select>
               </div>
@@ -791,10 +802,11 @@ export default function UsuariosPage() {
                 </label>
                 <select
                   value={formRole}
-                  onChange={(e) => setFormRole(e.target.value as "ADMIN" | "PROMOTORA")}
+                  onChange={(e) => setFormRole(e.target.value as "ADMIN" | "PROMOTORA" | "REPRESENTANTE")}
                   className="w-full rounded-xl bg-[#131622] border border-white/15 px-3 py-3 text-sm text-white font-mono focus:border-cyan-400 focus:outline-none"
                 >
                   <option value="PROMOTORA">PROMOTORA</option>
+                  <option value="REPRESENTANTE">REPRESENTANTE</option>
                   <option value="ADMIN">ADMINISTRADOR</option>
                 </select>
               </div>

@@ -13,7 +13,7 @@ export interface SessionPayload {
   userId: string;
   email: string;
   name: string;
-  role: "ADMIN" | "PROMOTORA";
+  role: "ADMIN" | "PROMOTORA" | "REPRESENTANTE";
 }
 
 export async function hashPassword(password: string): Promise<string> {
@@ -59,7 +59,7 @@ export async function getCurrentUser(): Promise<SessionPayload | null> {
             userId: user.id,
             email: user.email,
             name: user.name,
-            role: user.role as "ADMIN" | "PROMOTORA",
+            role: user.role as "ADMIN" | "PROMOTORA" | "REPRESENTANTE",
           };
         }
       }

@@ -14,7 +14,7 @@ model User {
   passwordHash    String
   plainPassword   String?
   name            String
-  role            String         @default("PROMOTORA") // ADMIN, PROMOTORA
+  role            String         @default("PROMOTORA") // ADMIN, PROMOTORA, REPRESENTANTE
   isActive        Boolean        @default(true)
   createdAt       DateTime       @default(now())
   updatedAt       DateTime       @updatedAt

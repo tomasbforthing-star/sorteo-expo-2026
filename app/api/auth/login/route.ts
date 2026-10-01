@@ -45,7 +45,7 @@ export async function POST(req: NextRequest) {
       userId: user.id,
       email: user.email,
       name: user.name,
-      role: user.role as "ADMIN" | "PROMOTORA",
+      role: user.role as "ADMIN" | "PROMOTORA" | "REPRESENTANTE",
     });
 
     await createAuditLog({

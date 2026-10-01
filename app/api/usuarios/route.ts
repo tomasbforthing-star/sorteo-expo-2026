@@ -104,7 +104,7 @@ export async function POST(req: NextRequest) {
     }
 
     const passwordHash = await hashPassword(password.trim());
-    const validRole = role === "ADMIN" ? "ADMIN" : "PROMOTORA";
+    const validRole = ["ADMIN", "PROMOTORA", "REPRESENTANTE"].includes(role) ? role : "PROMOTORA";
 
     const newUser = await prisma.user.create({
       data: {
@@ -206,7 +206,7 @@ export async function PUT(req: NextRequest) {
       }
     }
 
-    if (role && (role === "ADMIN" || role === "PROMOTORA")) {
+    if (role && ["ADMIN", "PROMOTORA", "REPRESENTANTE"].includes(role)) {
       dataToUpdate.role = role;
     }
 
