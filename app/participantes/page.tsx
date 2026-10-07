@@ -45,6 +45,7 @@ interface SummaryStats {
   day1Count: number;
   day2Count: number;
   day3Count: number;
+  webCount: number;
   activeJornada: {
     id: string;
     name: string;
@@ -75,11 +76,12 @@ export default function ParticipantesPage() {
     day1Count: 0,
     day2Count: 0,
     day3Count: 0,
+    webCount: 0,
     activeJornada: null,
   });
 
   const [search, setSearch] = useState("");
-  const [selectedDay, setSelectedDay] = useState<string>("all"); // "all", "1", "2", "3"
+  const [selectedDay, setSelectedDay] = useState<string>("all"); // "all", "1", "2", "3", "web"
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
@@ -127,6 +129,7 @@ export default function ParticipantesPage() {
           day1Count: data.stats?.day1Count || 0,
           day2Count: data.stats?.day2Count || 0,
           day3Count: data.stats?.day3Count || 0,
+          webCount: data.stats?.webCount || 0,
           activeJornada: data.stats?.activeJornada || null,
         });
       }
@@ -367,6 +370,7 @@ export default function ParticipantesPage() {
     if (selectedDay === "1") return "PARTICIPANTES DÍA 1";
     if (selectedDay === "2") return "PARTICIPANTES DÍA 2";
     if (selectedDay === "3") return "PARTICIPANTES DÍA 3";
+    if (selectedDay === "web") return "PARTICIPANTES WEB / PÚBLICO";
     return "TOTAL PARTICIPANTES";
   };
 
@@ -374,6 +378,7 @@ export default function ParticipantesPage() {
     if (selectedDay === "1") return stats.day1Count;
     if (selectedDay === "2") return stats.day2Count;
     if (selectedDay === "3") return stats.day3Count;
+    if (selectedDay === "web") return stats.webCount;
     return stats.totalParticipants;
   };
 
@@ -478,6 +483,7 @@ export default function ParticipantesPage() {
               { label: "DÍA 1", value: "1", count: stats.day1Count },
               { label: "DÍA 2", value: "2", count: stats.day2Count },
               { label: "DÍA 3", value: "3", count: stats.day3Count },
+              { label: "WEB / PÚBLICO", value: "web", count: stats.webCount },
             ].map((tab) => (
               <button
                 key={tab.value}
@@ -485,7 +491,7 @@ export default function ParticipantesPage() {
                   setSelectedDay(tab.value);
                   setPage(1);
                 }}
-                className={`px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all flex items-center gap-1.5 cursor-pointer ${
+                className={`px-4 py-2 rounded-xl text-xs font-bold font-mono transition-all flex items-center gap-1.5 cursor-pointer whitespace-nowrap ${
                   selectedDay === tab.value
                     ? "bg-primary text-black shadow-[0_0_12px_rgba(0,229,255,0.4)]"
                     : "bg-surface-light text-gray-400 hover:text-white border border-white/10"
@@ -554,8 +560,8 @@ export default function ParticipantesPage() {
                   <th className="px-6 py-4 font-bold">INSTAGRAM</th>
                   <th className="px-6 py-4 font-bold">CELULAR</th>
                   <th className="px-6 py-4 font-bold">ORIGEN / CARGA</th>
-                  <th className="px-6 py-4 font-bold">DÍA</th>
-                  <th className="px-6 py-4 font-bold">FECHA / HORA</th>
+                  <th className="px-6 py-4 font-bold">DÍA / FECHA REGISTRO</th>
+                  <th className="px-6 py-4 font-bold">HORA</th>
                   {isAdmin && <th className="px-6 py-4 font-bold text-right">ACCIONES</th>}
                 </tr>
               </thead>
@@ -585,12 +591,18 @@ export default function ParticipantesPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <Badge variant="purple" size="sm">
-                        {p.jornadaName}
-                      </Badge>
+                      {p.promotoraName === "Registro Online / Web" ? (
+                        <Badge variant="cyan" size="sm">
+                          {formatDate(p.createdAt)}
+                        </Badge>
+                      ) : (
+                        <Badge variant="purple" size="sm">
+                          {p.jornadaName}
+                        </Badge>
+                      )}
                     </td>
                     <td className="px-6 py-4 font-mono text-gray-400 text-[11px] whitespace-nowrap">
-                      {formatDate(p.createdAt)} {formatTime(p.createdAt)}
+                      {formatTime(p.createdAt)}
                     </td>
                     {isAdmin && (
                       <td className="px-6 py-4 text-right whitespace-nowrap">

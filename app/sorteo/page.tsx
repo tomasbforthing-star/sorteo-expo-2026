@@ -237,7 +237,7 @@ export default function SorteoPage() {
               {eligibleCount.toLocaleString("es-AR")}
             </p>
             <p className="text-xs text-gray-400 max-w-md mx-auto mb-8">
-              Universo de participantes pertenecientes a jornadas cerradas.
+              Universo de participantes pertenecientes a jornadas cerradas y registros web.
             </p>
 
             {!canDraw && (

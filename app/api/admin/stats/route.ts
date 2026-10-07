@@ -21,7 +21,22 @@ export async function GET() {
       },
     });
 
-    // 3. Jornadas con conteos
+    // 3. Conteos por Día y Web
+    const [day1Count, day2Count, day3Count, webCount] = await Promise.all([
+      prisma.participant.count({
+        where: { jornada: { number: 1 }, promotoraId: { not: null } },
+      }),
+      prisma.participant.count({
+        where: { jornada: { number: 2 }, promotoraId: { not: null } },
+      }),
+      prisma.participant.count({
+        where: { jornada: { number: 3 }, promotoraId: { not: null } },
+      }),
+      prisma.participant.count({
+        where: { promotoraId: null },
+      }),
+    ]);
+
     const jornadas = await prisma.jornada.findMany({
       orderBy: { number: "asc" },
       include: {
@@ -32,19 +47,15 @@ export async function GET() {
     // 4. Jornada activa
     const activeJornada = jornadas.find((j) => j.status === "ABIERTA") || null;
 
-    // Conteo por día
-    const day1 = jornadas.find((j) => j.number === 1);
-    const day2 = jornadas.find((j) => j.number === 2);
-    const day3 = jornadas.find((j) => j.number === 3);
-
     return NextResponse.json({
       success: true,
       stats: {
         totalParticipants,
         participantsToday,
-        day1Count: day1?._count.participants || 0,
-        day2Count: day2?._count.participants || 0,
-        day3Count: day3?._count.participants || 0,
+        day1Count,
+        day2Count,
+        day3Count,
+        webCount,
         activeJornada: activeJornada
           ? {
               id: activeJornada.id,

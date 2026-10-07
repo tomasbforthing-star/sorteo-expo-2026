@@ -31,7 +31,12 @@ export async function GET(req: NextRequest) {
     }
 
     if (dayNumber && dayNumber !== "all") {
-      where.jornada = { number: parseInt(dayNumber, 10) };
+      if (dayNumber === "web") {
+        where.promotoraId = null;
+      } else {
+        where.jornada = { number: parseInt(dayNumber, 10) };
+        where.promotoraId = { not: null };
+      }
     } else if (jornadaId) {
       where.jornadaId = jornadaId;
     }

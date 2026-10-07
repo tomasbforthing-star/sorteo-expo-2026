@@ -36,12 +36,17 @@ export async function GET() {
       excludedParticipantIds = pastWinners.map((w) => w.participantId);
     }
 
-    // Participantes de jornadas cerradas
+    // Participantes habilitados para el sorteo: Jornadas cerradas + Registros Web
+    const whereEligible: any = {
+      OR: [
+        { jornada: { status: "CERRADA" } },
+        { promotoraId: null }, // Registros Web / Públicos
+      ],
+      id: { notIn: excludedParticipantIds },
+    };
+
     const eligibleCount = await prisma.participant.count({
-      where: {
-        jornada: { status: "CERRADA" },
-        id: { notIn: excludedParticipantIds },
-      },
+      where: whereEligible,
     });
 
     const closedJornadas = await prisma.jornada.findMany({
@@ -140,12 +145,17 @@ export async function POST(req: NextRequest) {
       excludedParticipantIds = pastWinners.map((w) => w.participantId);
     }
 
-    // Universo de participantes habilitados de jornadas cerradas
+    // Universo de participantes habilitados: Jornadas cerradas + Registros Web
+    const whereEligible: any = {
+      OR: [
+        { jornada: { status: "CERRADA" } },
+        { promotoraId: null }, // Registros Web / Públicos
+      ],
+      id: { notIn: excludedParticipantIds },
+    };
+
     const eligibleParticipants = await prisma.participant.findMany({
-      where: {
-        jornada: { status: "CERRADA" },
-        id: { notIn: excludedParticipantIds },
-      },
+      where: whereEligible,
       select: {
         id: true,
         fullName: true,
