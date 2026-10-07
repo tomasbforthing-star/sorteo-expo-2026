@@ -77,7 +77,7 @@ export function Navbar() {
           </div>
           <div>
             <div className="font-extrabold tracking-wider text-white text-sm sm:text-base font-mono">
-              EXPO CHINA <span className="text-cyan-400">2026</span>
+              EXPO AUTO CHINO <span className="text-cyan-400">2026</span>
             </div>
             <div className="text-[10px] uppercase tracking-widest text-gray-400 font-semibold hidden sm:block">
               Sorteo Mar de las Pampas • Forthing

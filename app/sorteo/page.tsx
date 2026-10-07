@@ -204,7 +204,7 @@ export default function SorteoPage() {
       <div className="flex items-center justify-between border-b border-white/10 pb-4">
         <div className="text-left">
           <span className="text-xs font-bold text-cyan-400 font-mono tracking-widest uppercase">
-            EXPO CHINA 2026
+            EXPO AUTO CHINO 2026
           </span>
           <h1 className="text-2xl sm:text-3xl font-black text-white font-mono uppercase mt-0.5">
             SORTEO <span className="text-cyan-400">MAR DE LAS PAMPAS</span>
@@ -413,7 +413,7 @@ export default function SorteoPage() {
 
       {/* Footer info */}
       <footer className="border-t border-white/10 pt-4 text-center text-xs text-gray-500 font-mono">
-        EXPO CHINA 2026 • FORTHING ARGENTINA
+        EXPO AUTO CHINO 2026 • FORTHING ARGENTINA
       </footer>
 
       {/* Confirmation Modal */}

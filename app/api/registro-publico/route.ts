@@ -9,7 +9,7 @@ export async function GET() {
     const config = (await prisma.systemConfig.findUnique({
       where: { id: "default" },
     })) || {
-      eventName: "EXPO CHINA 2026",
+      eventName: "EXPO AUTO CHINO 2026",
       lotteryName: "SORTEO MAR DE LAS PAMPAS",
       officialInstagram: "forthingargentina",
     };
@@ -18,7 +18,7 @@ export async function GET() {
 
     return NextResponse.json({
       success: true,
-      eventName: config.eventName,
+      eventName: "EXPO AUTO CHINO 2026",
       lotteryName: config.lotteryName,
       officialInstagram: "forthingargentina",
       totalRegistered,

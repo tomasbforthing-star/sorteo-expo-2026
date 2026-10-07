@@ -10,7 +10,7 @@ export async function seedDatabase() {
   await prisma.systemConfig.upsert({
     where: { id: "default" },
     update: {
-      eventName: "EXPO CHINA 2026",
+      eventName: "EXPO AUTO CHINO 2026",
       lotteryName: "SORTEO MAR DE LAS PAMPAS",
       officialInstagram: "forthingargentina",
       totalDays: 3,
@@ -20,7 +20,7 @@ export async function seedDatabase() {
     },
     create: {
       id: "default",
-      eventName: "EXPO CHINA 2026",
+      eventName: "EXPO AUTO CHINO 2026",
       lotteryName: "SORTEO MAR DE LAS PAMPAS",
       officialInstagram: "forthingargentina",
       totalDays: 3,

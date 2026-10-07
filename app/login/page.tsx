@@ -70,7 +70,7 @@ export default function LoginPage() {
             />
           </div>
           <h1 className="text-3xl font-extrabold tracking-tight text-white font-mono uppercase">
-            EXPO CHINA <span className="text-cyan-400">2026</span>
+            EXPO AUTO CHINO <span className="text-cyan-400">2026</span>
           </h1>
           <p className="mt-1 text-sm font-semibold tracking-widest text-gray-400 uppercase font-mono">
             SISTEMA DE CAPTACIÓN & SORTEO

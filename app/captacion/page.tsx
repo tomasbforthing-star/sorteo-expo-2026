@@ -214,7 +214,7 @@ export default function CaptacionPage() {
       {/* Title section */}
       <div className="text-center mb-5">
         <span className="text-xs font-bold text-cyan-400 font-mono tracking-widest uppercase">
-          EXPO CHINA 2026
+          EXPO AUTO CHINO 2026
         </span>
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white font-mono uppercase mt-1">
           SORTEO <span className="text-cyan-400">MAR DE LAS PAMPAS</span>

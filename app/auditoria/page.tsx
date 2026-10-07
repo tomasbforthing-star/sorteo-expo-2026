@@ -353,7 +353,7 @@ export default function AuditoriaPage() {
             </h1>
           </div>
           <p className="text-xs text-gray-400 font-mono mt-1">
-            Registro inmutable de todas las acciones operativas en Expo China 2026.
+            Registro inmutable de todas las acciones operativas en Expo Auto Chino 2026.
           </p>
         </div>
 

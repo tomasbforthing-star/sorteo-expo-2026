@@ -14,9 +14,9 @@ export async function GET() {
       config = await prisma.systemConfig.create({
         data: {
           id: "default",
-          eventName: "EXPO CHINA 2026",
+          eventName: "EXPO AUTO CHINO 2026",
           lotteryName: "SORTEO MAR DE LAS PAMPAS",
-          officialInstagram: "forthing.argentina",
+          officialInstagram: "forthingargentina",
           totalDays: 3,
           winnersCount: 3,
           alternatesCount: 7,
@@ -70,9 +70,9 @@ export async function PATCH(req: NextRequest) {
       },
       create: {
         id: "default",
-        eventName: eventName || "EXPO CHINA 2026",
+        eventName: eventName || "EXPO AUTO CHINO 2026",
         lotteryName: lotteryName || "SORTEO MAR DE LAS PAMPAS",
-        officialInstagram: officialInstagram || "forthing.argentina",
+        officialInstagram: officialInstagram || "forthingargentina",
         totalDays: totalDays ? Number(totalDays) : 3,
         winnersCount: winnersCount ? Number(winnersCount) : 3,
         alternatesCount: alternatesCount ? Number(alternatesCount) : 7,

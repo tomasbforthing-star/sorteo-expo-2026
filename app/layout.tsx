@@ -4,8 +4,8 @@ import { ToastProvider } from "@/components/ui/ToastContext";
 import { Navbar } from "@/components/navigation/Navbar";
 
 export const metadata: Metadata = {
-  title: "EXPO CHINA 2026 — Captación y Sorteo",
-  description: "Sistema operativo para captación y sorteo de estadía en Mar de las Pampas — Expo China 2026",
+  title: "EXPO AUTO CHINO 2026 — Captación y Sorteo",
+  description: "Sistema operativo para captación y sorteo de estadía en Mar de las Pampas — Expo Auto Chino 2026",
 };
 
 export default function RootLayout({

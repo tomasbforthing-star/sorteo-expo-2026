@@ -371,7 +371,7 @@ export function LotteryStage() {
                 🎉 GANADORES & SUPLENTES 🎉
               </h2>
               <p className="text-sm font-mono text-cyan-300 mt-1 uppercase">
-                EXPO CHINA 2026 • RESULTADO OFICIAL
+                EXPO AUTO CHINO 2026 • RESULTADO OFICIAL
               </p>
             </div>
 
@@ -440,7 +440,7 @@ export function LotteryStage() {
 
       {/* Footer Branding */}
       <footer className="relative z-10 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500 font-mono border-t border-white/10 pt-4 gap-2">
-        <div>© 2026 FORTHING ARGENTINA • EXPO CHINA 2026</div>
+        <div>© 2026 FORTHING ARGENTINA • EXPO AUTO CHINO 2026</div>
         <div className="text-cyan-400 font-semibold">
           SORTEO MAR DE LAS PAMPAS • @{data.config.officialInstagram}
         </div>

@@ -94,7 +94,7 @@ model AuditLog {
 
 model SystemConfig {
   id                     String   @id @default("default")
-  eventName              String   @default("EXPO CHINA 2026")
+  eventName              String   @default("EXPO AUTO CHINO 2026")
   lotteryName            String   @default("SORTEO MAR DE LAS PAMPAS")
   officialInstagram      String   @default("forthingargentina")
   totalDays              Int      @default(3)

@@ -28,7 +28,7 @@ export default function PublicRegistroPage() {
   } | null>(null);
 
   const [eventInfo, setEventInfo] = useState({
-    eventName: "EXPO CHINA 2026",
+    eventName: "EXPO AUTO CHINO 2026",
     lotteryName: "SORTEO MAR DE LAS PAMPAS",
     officialInstagram: "forthingargentina",
   });
@@ -39,7 +39,7 @@ export default function PublicRegistroPage() {
       .then((data) => {
         if (data) {
           setEventInfo({
-            eventName: data.eventName || "EXPO CHINA 2026",
+            eventName: data.eventName || "EXPO AUTO CHINO 2026",
             lotteryName: data.lotteryName || "SORTEO MAR DE LAS PAMPAS",
             officialInstagram: data.officialInstagram || "forthingargentina",
           });
