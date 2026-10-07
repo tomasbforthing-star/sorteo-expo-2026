@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { User, AtSign, Phone, CheckCircle2, AlertTriangle, Calendar, Lock } from "lucide-react";
+import { User, AtSign, Phone, CheckCircle2, AlertTriangle, Calendar, Lock, Share2, Copy, Check, ExternalLink } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { Checkbox } from "@/components/ui/Checkbox";
@@ -29,6 +29,9 @@ export default function CaptacionPage() {
   const [instagram, setInstagram] = useState("");
   const [phone, setPhone] = useState("");
   const [followsInstagram, setFollowsInstagram] = useState(false);
+
+  // Public link copy state
+  const [copiedPublicLink, setCopiedPublicLink] = useState(false);
 
   // UI state
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -197,16 +200,48 @@ export default function CaptacionPage() {
     }
   };
 
+  const handleCopyPublicLink = () => {
+    if (typeof window === "undefined") return;
+    const publicUrl = `${window.location.origin}/registro`;
+    navigator.clipboard.writeText(publicUrl);
+    setCopiedPublicLink(true);
+    toastSuccess("Link Copiado", "El link público de inscripción fue copiado al portapapeles.");
+    setTimeout(() => setCopiedPublicLink(false), 2500);
+  };
+
   return (
     <div className="max-w-lg mx-auto px-4 py-6 sm:py-10">
       {/* Title section */}
-      <div className="text-center mb-6">
+      <div className="text-center mb-5">
         <span className="text-xs font-bold text-cyan-400 font-mono tracking-widest uppercase">
           EXPO CHINA 2026
         </span>
         <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white font-mono uppercase mt-1">
           SORTEO <span className="text-cyan-400">MAR DE LAS PAMPAS</span>
         </h1>
+      </div>
+
+      {/* Public Link Card for Easy Sharing */}
+      <div className="mb-6 p-4 rounded-2xl bg-gradient-to-r from-purple-500/10 via-cyan-500/10 to-emerald-500/10 border border-cyan-500/30 flex items-center justify-between gap-3 shadow-[0_0_20px_rgba(0,229,255,0.07)]">
+        <div className="text-left space-y-0.5">
+          <p className="text-xs font-bold text-white font-mono flex items-center gap-1.5">
+            <Share2 className="w-3.5 h-3.5 text-cyan-400" />
+            LINK PÚBLICO DEL SORTEO
+          </p>
+          <p className="text-[11px] text-gray-400 font-sans">
+            Compartí <strong className="text-cyan-300 font-mono">/registro</strong> para que la gente se anote directamente.
+          </p>
+        </div>
+        <Button
+          type="button"
+          variant="secondary"
+          size="sm"
+          onClick={handleCopyPublicLink}
+          className="shrink-0 font-mono text-xs text-cyan-300 hover:text-white border-cyan-500/40"
+          leftIcon={copiedPublicLink ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
+        >
+          {copiedPublicLink ? "COPIADO" : "COPIAR LINK"}
+        </Button>
       </div>
 
       {/* Selector de Jornada / Día */}

@@ -60,8 +60,8 @@ export function Navbar() {
     navItems.push({ name: "AUDITORÍA", href: "/auditoria", icon: ShieldCheck });
   }
 
-  // Don't render navbar on login page
-  if (pathname === "/login") return null;
+  // Don't render navbar on public pages
+  if (pathname === "/login" || pathname === "/registro" || pathname === "/participar") return null;
 
   return (
     <header className="sticky top-0 z-40 w-full border-b border-white/10 bg-[#090b10]/95 backdrop-blur-xl">

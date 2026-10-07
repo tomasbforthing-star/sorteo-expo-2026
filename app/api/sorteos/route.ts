@@ -46,9 +46,9 @@ export async function GET() {
           type: r.type,
           fullName: r.participant.fullName,
           instagram: r.participant.instagram,
-          phone: r.participant.phone,
+          phone: r.participant.phone || "N/A",
           jornadaName: r.participant.jornada.name,
-          promotoraName: r.participant.promotora.name,
+          promotoraName: r.participant.promotora?.name || "Registro Online / Web",
         })),
       })),
     });

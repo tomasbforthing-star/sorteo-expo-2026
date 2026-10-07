@@ -553,6 +553,7 @@ export default function ParticipantesPage() {
                   <th className="px-6 py-4 font-bold">NOMBRE</th>
                   <th className="px-6 py-4 font-bold">INSTAGRAM</th>
                   <th className="px-6 py-4 font-bold">CELULAR</th>
+                  <th className="px-6 py-4 font-bold">ORIGEN / CARGA</th>
                   <th className="px-6 py-4 font-bold">DÍA</th>
                   <th className="px-6 py-4 font-bold">FECHA / HORA</th>
                   {isAdmin && <th className="px-6 py-4 font-bold text-right">ACCIONES</th>}
@@ -568,7 +569,20 @@ export default function ParticipantesPage() {
                       @{p.instagram}
                     </td>
                     <td className="px-6 py-4 font-mono text-gray-300 whitespace-nowrap">
-                      {p.phone}
+                      {p.phone && p.phone !== "N/A" && p.phone.trim() !== "" ? (
+                        p.phone
+                      ) : (
+                        <span className="text-gray-500 italic">No requerido (Web)</span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap font-mono text-xs">
+                      {p.promotoraName === "Registro Online / Web" ? (
+                        <Badge variant="cyan" size="sm">
+                          🌐 WEB / PÚBLICO
+                        </Badge>
+                      ) : (
+                        <span className="text-gray-300 font-semibold">{p.promotoraName || "Promotora"}</span>
+                      )}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <Badge variant="purple" size="sm">

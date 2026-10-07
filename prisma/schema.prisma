@@ -43,10 +43,10 @@ model Participant {
   id               String          @id @default(cuid())
   fullName         String
   instagram        String          @unique // Normalizado en minúsculas y sin @
-  phone            String          // Guardado como texto
+  phone            String?         @default("") // Opcional para registros web
   followsInstagram Boolean         @default(true)
-  promotoraId      String
-  promotora        User            @relation(fields: [promotoraId], references: [id])
+  promotoraId      String?
+  promotora        User?           @relation(fields: [promotoraId], references: [id])
   jornadaId        String
   jornada          Jornada         @relation(fields: [jornadaId], references: [id])
   status           String          @default("ACTIVO") // ACTIVO, GANADOR, SUPLENTE
