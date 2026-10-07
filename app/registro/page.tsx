@@ -30,7 +30,7 @@ export default function PublicRegistroPage() {
   const [eventInfo, setEventInfo] = useState({
     eventName: "EXPO CHINA 2026",
     lotteryName: "SORTEO MAR DE LAS PAMPAS",
-    officialInstagram: "forthing.argentina",
+    officialInstagram: "forthingargentina",
   });
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export default function PublicRegistroPage() {
           setEventInfo({
             eventName: data.eventName || "EXPO CHINA 2026",
             lotteryName: data.lotteryName || "SORTEO MAR DE LAS PAMPAS",
-            officialInstagram: data.officialInstagram || "forthing.argentina",
+            officialInstagram: data.officialInstagram || "forthingargentina",
           });
         }
       })
@@ -102,7 +102,7 @@ export default function PublicRegistroPage() {
     setInstagram("");
   };
 
-  const instagramProfileUrl = `https://www.instagram.com/${eventInfo.officialInstagram.replace(/^@/, "")}/`;
+  const instagramProfileUrl = "https://www.instagram.com/forthingargentina/?hl=es";
 
   return (
     <div className="min-h-screen bg-[#07090e] text-white flex flex-col justify-between selection:bg-cyan-500 selection:text-black">

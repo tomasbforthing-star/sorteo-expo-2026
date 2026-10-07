@@ -96,7 +96,7 @@ model SystemConfig {
   id                     String   @id @default("default")
   eventName              String   @default("EXPO CHINA 2026")
   lotteryName            String   @default("SORTEO MAR DE LAS PAMPAS")
-  officialInstagram      String   @default("forthing.argentina")
+  officialInstagram      String   @default("forthingargentina")
   totalDays              Int      @default(3)
   winnersCount           Int      @default(3)
   alternatesCount        Int      @default(7)

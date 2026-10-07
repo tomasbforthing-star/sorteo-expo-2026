@@ -12,7 +12,7 @@ export async function seedDatabase() {
     update: {
       eventName: "EXPO CHINA 2026",
       lotteryName: "SORTEO MAR DE LAS PAMPAS",
-      officialInstagram: "forthing.argentina",
+      officialInstagram: "forthingargentina",
       totalDays: 3,
       winnersCount: 3,
       alternatesCount: 7,
@@ -22,7 +22,7 @@ export async function seedDatabase() {
       id: "default",
       eventName: "EXPO CHINA 2026",
       lotteryName: "SORTEO MAR DE LAS PAMPAS",
-      officialInstagram: "forthing.argentina",
+      officialInstagram: "forthingargentina",
       totalDays: 3,
       winnersCount: 3,
       alternatesCount: 7,

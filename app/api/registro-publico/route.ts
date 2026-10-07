@@ -11,7 +11,7 @@ export async function GET() {
     })) || {
       eventName: "EXPO CHINA 2026",
       lotteryName: "SORTEO MAR DE LAS PAMPAS",
-      officialInstagram: "forthing.argentina",
+      officialInstagram: "forthingargentina",
     };
 
     const totalRegistered = await prisma.participant.count();
@@ -20,7 +20,7 @@ export async function GET() {
       success: true,
       eventName: config.eventName,
       lotteryName: config.lotteryName,
-      officialInstagram: config.officialInstagram,
+      officialInstagram: "forthingargentina",
       totalRegistered,
     });
   } catch (error) {
